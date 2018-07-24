@@ -1,69 +1,187 @@
 view: combined_rounds {
-  # # You can specify the table name if it's different from the view name:
-  # sql_table_name: my_schema_name.tester ;;
-  #
-  # # Define your dimensions and measures here, like this:
-  # dimension: user_id {
-  #   description: "Unique ID for each user that has ordered"
-  #   type: number
-  #   sql: ${TABLE}.user_id ;;
-  # }
-  #
-  # dimension: lifetime_orders {
-  #   description: "The total number of orders for each user"
-  #   type: number
-  #   sql: ${TABLE}.lifetime_orders ;;
-  # }
-  #
-  # dimension_group: most_recent_purchase {
-  #   description: "The date when each user last ordered"
-  #   type: time
-  #   timeframes: [date, week, month, year]
-  #   sql: ${TABLE}.most_recent_purchase_at ;;
-  # }
-  #
-  # measure: total_lifetime_orders {
-  #   description: "Use this for counting lifetime orders across many users"
-  #   type: sum
-  #   sql: ${lifetime_orders} ;;
-  # }
-}
+  derived_table: {
+    sql: SELECT * EXCEPT(round__players__course__holes__description) FROM golf_stats.Masters_Rounds
+        UNION ALL
+        SELECT *  FROM golf_stats.Open_Rounds
+        UNION ALL
+        SELECT *  FROM golf_stats.PGA_Championship_Rounds
+        UNION ALL
+        SELECT * EXCEPT(round__status) FROM golf_stats.US_Open_Rounds ;;
+  }
 
-# view: combined_rounds {
-#   # Or, you could make this view a derived table, like this:
-#   derived_table: {
-#     sql: SELECT
-#         user_id as user_id
-#         , COUNT(*) as lifetime_orders
-#         , MAX(orders.created_at) as most_recent_purchase_at
-#       FROM orders
-#       GROUP BY user_id
-#       ;;
-#   }
-#
-#   # Define your dimensions and measures here, like this:
-#   dimension: user_id {
-#     description: "Unique ID for each user that has ordered"
-#     type: number
-#     sql: ${TABLE}.user_id ;;
-#   }
-#
-#   dimension: lifetime_orders {
-#     description: "The total number of orders for each user"
-#     type: number
-#     sql: ${TABLE}.lifetime_orders ;;
-#   }
-#
-#   dimension_group: most_recent_purchase {
-#     description: "The date when each user last ordered"
-#     type: time
-#     timeframes: [date, week, month, year]
-#     sql: ${TABLE}.most_recent_purchase_at ;;
-#   }
-#
-#   measure: total_lifetime_orders {
-#     description: "Use this for counting lifetime orders across many users"
-#     type: sum
-#     sql: ${lifetime_orders} ;;
-#   }
-# }
+  dimension: id {
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.id ;;
+  }
+
+  dimension_group: end {
+    type: time
+    timeframes: [
+      raw,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.end_date ;;
+  }
+
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
+  }
+
+  dimension: round__id {
+    type: string
+    sql: ${TABLE}.round__id ;;
+  }
+
+  dimension: round__number {
+    type: number
+    sql: ${TABLE}.round__number ;;
+  }
+
+  dimension: round__players__birdies {
+    type: number
+    sql: ${TABLE}.round__players__birdies ;;
+  }
+
+  dimension: round__players__bogeys {
+    type: number
+    sql: ${TABLE}.round__players__bogeys ;;
+  }
+
+  dimension: round__players__course__holes__number {
+    type: number
+    sql: ${TABLE}.round__players__course__holes__number ;;
+  }
+
+  dimension: round__players__course__holes__par {
+    type: number
+    sql: ${TABLE}.round__players__course__holes__par ;;
+  }
+
+  dimension: round__players__course__holes__yardage {
+    type: number
+    sql: ${TABLE}.round__players__course__holes__yardage ;;
+  }
+
+  dimension: round__players__course__id {
+    type: string
+    sql: ${TABLE}.round__players__course__id ;;
+  }
+
+  dimension: round__players__course__par {
+    type: number
+    sql: ${TABLE}.round__players__course__par ;;
+  }
+
+  dimension: round__players__course__yardage {
+    type: number
+    sql: ${TABLE}.round__players__course__yardage ;;
+  }
+
+  dimension: round__players__double_bogeys {
+    type: number
+    sql: ${TABLE}.round__players__double_bogeys ;;
+  }
+
+  dimension: round__players__eagles {
+    type: number
+    sql: ${TABLE}.round__players__eagles ;;
+  }
+
+  dimension: round__players__first_name {
+    type: string
+    sql: ${TABLE}.round__players__first_name ;;
+  }
+
+  dimension: round__players__id {
+    type: string
+    sql: ${TABLE}.round__players__id ;;
+  }
+
+  dimension: round__players__last_name {
+    type: string
+    sql: ${TABLE}.round__players__last_name ;;
+  }
+
+  dimension: round__players__pars {
+    type: number
+    sql: ${TABLE}.round__players__pars ;;
+  }
+
+  dimension: round__players__score {
+    type: number
+    sql: ${TABLE}.round__players__score ;;
+  }
+
+  dimension: round__players__scores__number {
+    type: number
+    sql: ${TABLE}.round__players__scores__number ;;
+  }
+
+  dimension: round__players__scores__par {
+    type: number
+    sql: ${TABLE}.round__players__scores__par ;;
+  }
+
+  dimension: round__players__scores__strokes {
+    type: number
+    sql: ${TABLE}.round__players__scores__strokes ;;
+  }
+
+  dimension: round__players__scores__yardage {
+    type: number
+    sql: ${TABLE}.round__players__scores__yardage ;;
+  }
+
+  dimension: round__players__strokes {
+    type: number
+    sql: ${TABLE}.round__players__strokes ;;
+  }
+
+  dimension: seasons__id {
+    type: string
+    sql: ${TABLE}.seasons__id ;;
+  }
+
+  dimension: seasons__tour__id {
+    type: string
+    sql: ${TABLE}.seasons__tour__id ;;
+  }
+
+  dimension: seasons__tour__name {
+    type: string
+    sql: ${TABLE}.seasons__tour__name ;;
+  }
+
+  dimension: seasons__year {
+    type: number
+    sql: cast(${TABLE}.seasons__year as INT64) ;;
+  }
+
+  dimension_group: start {
+    type: time
+    timeframes: [
+      raw,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.start_date ;;
+  }
+
+  measure: count {
+    type: count
+    drill_fields: [id, round__players__first_name, seasons__tour__name, round__players__last_name, name]
+  }
+}

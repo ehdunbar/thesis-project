@@ -1,69 +1,167 @@
 view: combined_leaderboard {
-  # # You can specify the table name if it's different from the view name:
-  # sql_table_name: my_schema_name.tester ;;
-  #
-  # # Define your dimensions and measures here, like this:
-  # dimension: user_id {
-  #   description: "Unique ID for each user that has ordered"
-  #   type: number
-  #   sql: ${TABLE}.user_id ;;
-  # }
-  #
-  # dimension: lifetime_orders {
-  #   description: "The total number of orders for each user"
-  #   type: number
-  #   sql: ${TABLE}.lifetime_orders ;;
-  # }
-  #
-  # dimension_group: most_recent_purchase {
-  #   description: "The date when each user last ordered"
-  #   type: time
-  #   timeframes: [date, week, month, year]
-  #   sql: ${TABLE}.most_recent_purchase_at ;;
-  # }
-  #
-  # measure: total_lifetime_orders {
-  #   description: "Use this for counting lifetime orders across many users"
-  #   type: sum
-  #   sql: ${lifetime_orders} ;;
-  # }
-}
+  derived_table: {
+    sql: SELECT * FROM golf_stats.Masters_Leaderboard
+      UNION ALL
+      SELECT *  FROM golf_stats.Open_Leaderboard
+      UNION ALL
+      SELECT *  FROM golf_stats.PGA_Championship_Leaderboard
+      UNION ALL
+      SELECT *  FROM golf_stats.US_Open_Leaderboard ;;
+  }
 
-# view: combined_leaderboard {
-#   # Or, you could make this view a derived table, like this:
-#   derived_table: {
-#     sql: SELECT
-#         user_id as user_id
-#         , COUNT(*) as lifetime_orders
-#         , MAX(orders.created_at) as most_recent_purchase_at
-#       FROM orders
-#       GROUP BY user_id
-#       ;;
-#   }
-#
-#   # Define your dimensions and measures here, like this:
-#   dimension: user_id {
-#     description: "Unique ID for each user that has ordered"
-#     type: number
-#     sql: ${TABLE}.user_id ;;
-#   }
-#
-#   dimension: lifetime_orders {
-#     description: "The total number of orders for each user"
-#     type: number
-#     sql: ${TABLE}.lifetime_orders ;;
-#   }
-#
-#   dimension_group: most_recent_purchase {
-#     description: "The date when each user last ordered"
-#     type: time
-#     timeframes: [date, week, month, year]
-#     sql: ${TABLE}.most_recent_purchase_at ;;
-#   }
-#
-#   measure: total_lifetime_orders {
-#     description: "Use this for counting lifetime orders across many users"
-#     type: sum
-#     sql: ${lifetime_orders} ;;
-#   }
-# }
+  dimension: id {
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.id ;;
+  }
+
+  dimension_group: end {
+    type: time
+    timeframes: [
+      raw,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.end_date ;;
+  }
+
+  dimension: int64_field_0 {
+    type: number
+    sql: ${TABLE}.int64_field_0 ;;
+  }
+
+  dimension: leaderboard__first_name {
+    type: string
+    sql: ${TABLE}.leaderboard__first_name ;;
+  }
+
+  dimension: leaderboard__id {
+    type: string
+    sql: ${TABLE}.leaderboard__id ;;
+  }
+
+  dimension: leaderboard__last_name {
+    type: string
+    sql: ${TABLE}.leaderboard__last_name ;;
+  }
+
+  dimension: leaderboard__position {
+    type: number
+    sql: ${TABLE}.leaderboard__position ;;
+  }
+
+  dimension: leaderboard__rounds__birdies {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__birdies ;;
+  }
+
+  dimension: leaderboard__rounds__bogeys {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__bogeys ;;
+  }
+
+  dimension: leaderboard__rounds__double_bogeys {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__double_bogeys ;;
+  }
+
+  dimension: leaderboard__rounds__eagles {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__eagles ;;
+  }
+
+  dimension: leaderboard__rounds__holes_in_one {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__holes_in_one ;;
+  }
+
+  dimension: leaderboard__rounds__other_scores {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__other_scores ;;
+  }
+
+  dimension: leaderboard__rounds__pars {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__pars ;;
+  }
+
+  dimension: leaderboard__rounds__score {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__score ;;
+  }
+
+  dimension: leaderboard__rounds__sequence {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__sequence ;;
+  }
+
+  dimension: leaderboard__rounds__strokes {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__strokes ;;
+  }
+
+  dimension: leaderboard__rounds__thru {
+    type: number
+    sql: ${TABLE}.leaderboard__rounds__thru ;;
+  }
+
+  dimension: leaderboard__score {
+    type: number
+    sql: ${TABLE}.leaderboard__score ;;
+  }
+
+  dimension: leaderboard__strokes {
+    type: number
+    sql: ${TABLE}.leaderboard__strokes ;;
+  }
+
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
+  }
+
+  dimension: seasons__id {
+    type: string
+    sql: ${TABLE}.seasons__id ;;
+  }
+
+  dimension: seasons__tour__id {
+    type: string
+    sql: ${TABLE}.seasons__tour__id ;;
+  }
+
+  dimension: seasons__tour__name {
+    type: string
+    sql: ${TABLE}.seasons__tour__name ;;
+  }
+
+  dimension: seasons__year {
+    type: number
+    sql: ${TABLE}.seasons__year ;;
+  }
+
+  dimension_group: start {
+    type: time
+    timeframes: [
+      raw,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    convert_tz: no
+    datatype: date
+    sql: ${TABLE}.start_date ;;
+  }
+
+  measure: count {
+    type: count
+    drill_fields: [id, leaderboard__first_name, seasons__tour__name, leaderboard__last_name, name]
+  }
+}
