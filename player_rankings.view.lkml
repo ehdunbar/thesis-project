@@ -1,6 +1,14 @@
 view: player_rankings {
   sql_table_name: golf_stats.Player_Rankings ;;
 
+
+  dimension: top_ten {
+    type: tier
+    tiers: [0, 11]
+    style: integer
+    sql: ${TABLE}.players__rank ;;
+}
+
   dimension: id {
     primary_key: yes
     type: string
